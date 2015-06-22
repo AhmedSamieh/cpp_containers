@@ -17,7 +17,6 @@ public:
     }
     BSTNode(_KT_ ikey, _VT_ ival) : parent(NULL), left(NULL), right(NULL), key(ikey), val(ival)
     {
-        cout << "BSTNode(" << key << ", " << val << ")" << endl;
     }
     ~BSTNode()
     {

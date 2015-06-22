@@ -1,6 +1,5 @@
 #include <iostream>
 #include "BSTNode.h"
-#include <list>
 
 using namespace std;
 
@@ -48,7 +47,6 @@ public:
     {
         if (NULL != maximum)
         {
-            cout << "TOP(" << maximum->get_key() << ", " << maximum->get_val() << ")" << endl;
             return maximum->get_val();
         }
     }
@@ -170,12 +168,12 @@ public:
     }
     void print()
     {
-        list< pair< pair< BSTNode<_KT_, _VT_> *, int>, bool> > q;
-        q.push_back(make_pair(make_pair(head, 64), true));
+        priority_queue< int, pair< pair< BSTNode<_KT_, _VT_> *, int>, bool> > q;
+        q.push(1, make_pair(make_pair(head, 64), true));
         while (!q.empty())
         {
-            pair< pair< BSTNode<_KT_, _VT_> *, int>, bool> node = q.front();
-            q.pop_front();
+            pair< pair< BSTNode<_KT_, _VT_> *, int>, bool> node = q.top();
+            q.pop();
             for (int i = 0; i < node.first.second/2; i++)
             {
                 cout << " ";
@@ -233,13 +231,13 @@ public:
             }
             if (NULL != node.first.first)
             {
-                q.push_back(make_pair(make_pair(node.first.first->get_left(), (node.first.second)/2), false));
-                q.push_back(make_pair(make_pair(node.first.first->get_right(), (node.first.second)/2), node.second));
+                q.push(1, make_pair(make_pair(node.first.first->get_left(), (node.first.second)/2), false));
+                q.push(1, make_pair(make_pair(node.first.first->get_right(), (node.first.second)/2), node.second));
             }
             else if (node.first.second > 1)
             {
-                q.push_back(make_pair(make_pair(node.first.first, (node.first.second)/2), false));
-                q.push_back(make_pair(make_pair(node.first.first, (node.first.second)/2), node.second));
+                q.push(1, make_pair(make_pair(node.first.first, (node.first.second)/2), false));
+                q.push(1, make_pair(make_pair(node.first.first, (node.first.second)/2), node.second));
             }
         }
     }
@@ -252,13 +250,13 @@ int main(int argc, char **argv)
     int input[] = {3, 1, 2, 4, 5, 1, 3, 2, 3, 4, 1, 2, 5, 1, 3, 2, 1, 1};
     for (int i = 0; i < sizeof(input)/sizeof(int); i++)
     {
+        cout << "push: " << input[i] << ", " << i + 1 << endl;
         pq.push(input[i], i + 1);
     }
     pq.print();
     for (int i = 0; i < sizeof(input)/sizeof(int); i++)
     {
-        //cout << "top : " << pq.top() << endl;
-        pq.top();
+        cout << "top : " << pq.top() << endl;
         pq.pop();
     }
 }
