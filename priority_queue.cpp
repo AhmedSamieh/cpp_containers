@@ -1,5 +1,6 @@
 #include <iostream>
 #include "BSTNode.h"
+#include <list>
 
 using namespace std;
 
@@ -68,34 +69,60 @@ public:
         else
         {
             // start from head, insert the new element
-            BSTNode<_KT_, _VT_> *i = head;
+            BSTNode<_KT_, _VT_> *parent = head;
             while (true)
             {
-                if (new_node->get_key() > i->get_key())
+                if (key > parent->get_key())
                 {
-                    if (NULL != i->get_right())
+                    if (NULL != parent->get_right())
                     {
-                        i = i->get_right();
+                        parent = parent->get_right();
                     }
                     else
                     {
-                        i->set_right(new_node);
-                        new_node->set_parent(i);
-                        //cout << "Parent(" << i->get_key() << ", " << i->get_val() << ")" << endl;
+                        parent->set_right(new_node);
+                        new_node->set_parent(parent);
+                        //cout << "Parent(" << parent->get_key() << ", " << parent->get_val() << ")" << endl;
                         break;
                     }
                 }
                 else
                 {
-                    if (NULL != i->get_left())
+                    if (NULL != parent->get_left())
                     {
-                        i = i->get_left();
+                        parent = parent->get_left();
                     }
                     else
                     {
-                        i->set_left(new_node);
-                        new_node->set_parent(i);
-                        //cout << "Parent(" << i->get_key() << ", " << i->get_val() << ")" << endl;
+                        BSTNode<_KT_, _VT_> *grand_parent;
+                        parent->set_left(new_node);
+                        new_node->set_parent(parent);
+                        //cout << "Parent(" << parent->get_key() << ", " << parent->get_val() << ")" << endl;
+                        if (NULL == parent->get_right() &&
+                            NULL != (grand_parent = parent->get_parent()) &&
+                            NULL == grand_parent->get_right())
+                        {
+                            //cout << "fix (" << new_node->get_val() << ", " << parent->get_val() << ", " << grand_parent->get_val() << ")" << endl;
+                            parent->set_right(grand_parent);
+                            parent->set_parent(grand_parent->get_parent());
+                            grand_parent->set_parent(parent);
+                            grand_parent->set_left(NULL);
+                            if (NULL == parent->get_parent())
+                            {
+                                head = parent;
+                            }
+                            else
+                            {
+                                if (parent->get_parent()->get_left() == parent->get_right())
+                                {
+                                    parent->get_parent()->set_left(parent);
+                                }
+                                else
+                                {
+                                    parent->get_parent()->set_right(parent);
+                                }
+                            }
+                        }
                         break;
                     }
                 }
@@ -141,17 +168,93 @@ public:
             number_of_nodes--;
         }
     }
+    void print()
+    {
+        list< pair< pair< BSTNode<_KT_, _VT_> *, int>, bool> > q;
+        q.push_back(make_pair(make_pair(head, 64), true));
+        while (!q.empty())
+        {
+            pair< pair< BSTNode<_KT_, _VT_> *, int>, bool> node = q.front();
+            q.pop_front();
+            for (int i = 0; i < node.first.second/2; i++)
+            {
+                cout << " ";
+            }
+            if (NULL != node.first.first)
+            {
+                if (NULL != node.first.first->get_left())
+                {
+                    for (int i = 0; i < node.first.second/2; i++)
+                    {
+                        cout << ".";
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < node.first.second/2; i++)
+                    {
+                        cout << " ";
+                    }
+                }
+                cout << node.first.first->get_val();
+                if (NULL != node.first.first->get_right())
+                {
+                    for (int i = 1; i < node.first.second/2; i++)
+                    {
+                        cout << ".";
+                    }
+                }
+                else
+                {
+                    for (int i = 1; i < node.first.second/2; i++)
+                    {
+                        cout << " ";
+                    }
+                }
+                for (int i = 0; i < node.first.second/2; i++)
+                {
+                    cout << " ";
+                }
+            }
+            else
+            {
+                for (int i = 0; i < node.first.second/2; i++)
+                {
+                    cout << " ";
+                }
+                for (int i = 0; i < node.first.second; i++)
+                {
+                    cout << " ";
+                }
+            }
+            if (node.second)
+            {
+                cout << endl;
+            }
+            if (NULL != node.first.first)
+            {
+                q.push_back(make_pair(make_pair(node.first.first->get_left(), (node.first.second)/2), false));
+                q.push_back(make_pair(make_pair(node.first.first->get_right(), (node.first.second)/2), node.second));
+            }
+            else if (node.first.second > 1)
+            {
+                q.push_back(make_pair(make_pair(node.first.first, (node.first.second)/2), false));
+                q.push_back(make_pair(make_pair(node.first.first, (node.first.second)/2), node.second));
+            }
+        }
+    }
 };
 
 int main(int argc, char **argv)
 {
     priority_queue<int, int> pq;
 
-    int input[] = {1, 1, 2, 4, 5, 1, 3, 2, 3, 4};
+    int input[] = {3, 1, 2, 4, 5, 1, 3, 2, 3, 4, 1, 2, 5, 1, 3, 2, 1, 1};
     for (int i = 0; i < sizeof(input)/sizeof(int); i++)
     {
         pq.push(input[i], i + 1);
     }
+    pq.print();
     for (int i = 0; i < sizeof(input)/sizeof(int); i++)
     {
         //cout << "top : " << pq.top() << endl;
