@@ -2,20 +2,19 @@
 
 using namespace std;
 
-template <class _KT_, class _VT_>
+template <class Type>
 class BSTNode
 {
 private:
     BSTNode *parent;
     BSTNode *left;
     BSTNode *right;
-    _KT_     key;
-    _VT_     val;
+    Type     val;
 public:
     BSTNode() : parent(NULL), left(NULL), right(NULL)
     {
     }
-    BSTNode(_KT_ ikey, _VT_ ival) : parent(NULL), left(NULL), right(NULL), key(ikey), val(ival)
+    BSTNode(Type ival, BSTNode *iparent = NULL) : parent(iparent), left(NULL), right(NULL), val(ival)
     {
     }
     ~BSTNode()
@@ -45,19 +44,11 @@ public:
     {
         return right;
     }
-    void set_key(_KT_ ikey)
-    {
-        key = ikey;
-    }
-    _KT_ get_key()
-    {
-        return key;
-    }
-    void set_val(_VT_ ival)
+    void set_val(Type ival)
     {
         val = ival;
     }
-    _VT_ get_val()
+    Type get_val()
     {
         return val;
     }

@@ -1,18 +1,18 @@
 #include <iostream>
-#include "BSTNode.h"
+#include "KeyValBSTNode.h"
 
 using namespace std;
 
-template <class _KT_, class _VT_>
+template <class KeyType, class ValType>
 class priority_queue
 {
 private:
-    BSTNode<_KT_, _VT_> *head;
-    BSTNode<_KT_, _VT_> *maximum;
-    size_t               number_of_nodes;
-    BSTNode<_KT_, _VT_> *find_maximum_node(BSTNode<_KT_, _VT_> *root)
+    KeyValBSTNode<KeyType, ValType> *head;
+    KeyValBSTNode<KeyType, ValType> *maximum;
+    size_t                           number_of_nodes;
+    KeyValBSTNode<KeyType, ValType> *find_maximum_node(KeyValBSTNode<KeyType, ValType> *root)
     {
-        BSTNode<_KT_, _VT_> *node = root;
+        KeyValBSTNode<KeyType, ValType> *node = root;
         if (NULL != node)
         {
             while (NULL != node->get_right())
@@ -43,16 +43,16 @@ public:
     {
         return number_of_nodes;
     }
-    _VT_ top()
+    ValType top()
     {
         if (NULL != maximum)
         {
             return maximum->get_val();
         }
     }
-    void push(_KT_ key, _VT_ val)
+    void push(KeyType key, ValType val)
     {
-        BSTNode<_KT_, _VT_> *new_node = new BSTNode<_KT_, _VT_>(key, val);
+        KeyValBSTNode<KeyType, ValType> *new_node = new KeyValBSTNode<KeyType, ValType>(key, val);
         if (NULL == head)
         {
             head = maximum = new_node;
@@ -67,7 +67,7 @@ public:
         else
         {
             // start from head, insert the new element
-            BSTNode<_KT_, _VT_> *parent = head;
+            KeyValBSTNode<KeyType, ValType> *parent = head;
             while (true)
             {
                 if (key > parent->get_key())
@@ -92,7 +92,7 @@ public:
                     }
                     else
                     {
-                        BSTNode<_KT_, _VT_> *grand_parent;
+                        KeyValBSTNode<KeyType, ValType> *grand_parent;
                         parent->set_left(new_node);
                         new_node->set_parent(parent);
                         //cout << "Parent(" << parent->get_key() << ", " << parent->get_val() << ")" << endl;
@@ -133,7 +133,7 @@ public:
         // make sure we have nodes to pop
         if (number_of_nodes > 0)
         {
-            BSTNode<_KT_, _VT_> *temp_maximum = maximum;
+            KeyValBSTNode<KeyType, ValType> *temp_maximum = maximum;
             // check if we will pop from the head
             if (maximum == head)
             {
@@ -168,11 +168,11 @@ public:
     }
     void print()
     {
-        priority_queue< int, pair< pair< BSTNode<_KT_, _VT_> *, int>, bool> > q;
+        priority_queue< int, pair< pair< KeyValBSTNode<KeyType, ValType> *, int>, bool> > q;
         q.push(1, make_pair(make_pair(head, 64), true));
         while (!q.empty())
         {
-            pair< pair< BSTNode<_KT_, _VT_> *, int>, bool> node = q.top();
+            pair< pair< KeyValBSTNode<KeyType, ValType> *, int>, bool> node = q.top();
             q.pop();
             for (int i = 0; i < node.first.second/2; i++)
             {
