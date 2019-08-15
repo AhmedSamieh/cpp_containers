@@ -4,10 +4,19 @@
 using namespace std;
 
 template <class Type>
+class custom_compare
+{
+public:
+    bool operator()(const Type& lhs, const Type& rhs)
+    {
+        return lhs.first > rhs.first;
+    }
+};
+template <class Type>
 class priority_queue
 {
 private:
-    multiset<Type> ms;
+    multiset<Type, custom_compare<Type> > ms;
 public:
     priority_queue()
     {
@@ -26,10 +35,10 @@ public:
     }
     const Type& top()
     {
-        auto criter = ms.crbegin();
-        if (criter != ms.crend())
+        auto citer = ms.cbegin();
+        if (citer != ms.cend())
         {
-            return *criter;
+            return *citer;
         }
     }
     void push(const Type &val)
@@ -40,24 +49,25 @@ public:
     {
         if (ms.begin() != ms.end())
         {
-            ms.erase(prev(ms.end()));
+            ms.erase(ms.begin());
         }
     }
 };
 
 int main(int argc, char **argv)
 {
-    priority_queue<int> pq;
+    priority_queue< pair<int,int> > pq;
 
-    int input[] = {3, 1, 2, 4, 5, 1, 3, 2, 3, 4, 1, 2, 5, 1, 3, 2, 1, 1};
-    for (int i = 0; i < sizeof(input)/sizeof(int); i++)
+    int priority[] = {3, 1, 2, 4, 5, 1, 3, 2, 3, 4, 1, 2, 5, 1, 3, 2, 1, 1};
+    int data[]     = {8, 23, 6, 12, 9, 5, 7, 3, 0, 4, 52, 8, 56, 34, 547, 9, 46, 19};
+    for (int i = 0; i < sizeof(priority)/sizeof(int); i++)
     {
-        cout << "push: " << input[i] << endl;
-        pq.push(input[i]);
+        cout << "push: [priority : " << priority[i] << "][data : " << data[i] << "]" << endl;
+        pq.push(make_pair(priority[i], data[i]));
     }
-    for (int i = 0; i < sizeof(input)/sizeof(int); i++)
+    for (int i = 0; i < sizeof(priority)/sizeof(int); i++)
     {
-        cout << "top : " << pq.top() << endl;
+        cout << "top : [priority : " << pq.top().first << "][data : " << pq.top().second << "]" << endl;
         pq.pop();
     }
     return 0;
