@@ -12,6 +12,7 @@ private:
 protected:
     bnode_base() : parent(NULL), left(NULL), right(NULL) {}
     bnode_base(T const& ival) : parent(NULL), left(NULL), right(NULL), val(ival) {}
+    virtual ~bnode_base() {}
 public:
     void set_parent(Node* const node)
     {

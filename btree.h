@@ -10,7 +10,7 @@ template <class T, class Node = bnode<T> >
 
 class btree
 {
-private:
+protected:
     Node*  root;
     size_t number_of_nodes;
 
@@ -32,9 +32,86 @@ private:
         }
         return node;
     }
+    virtual void subtree_print(Node* const subtree_root)
+    {
+        list<pair< pair<Node* const, int>, bool> > q;
+        q.push_back(make_pair(make_pair(subtree_root, 64), true));
+        while (!q.empty())
+        {
+            auto node = q.front();
+            q.pop_front();
+            for (int i = 0; i < node.first.second/2; i++)
+            {
+                cout << " ";
+            }
+            if (NULL != node.first.first)
+            {
+                int shift = (node.first.first->get_val() / 10) ? ((node.first.first->get_val() / 100) ? 2:1):0;
+                if (NULL != node.first.first->get_left())
+                {
+                    for (int i = shift; i < node.first.second/2; i++)
+                    {
+                        cout << ".";
+                    }
+                }
+                else
+                {
+                    for (int i = shift; i < node.first.second/2; i++)
+                    {
+                        cout << " ";
+                    }
+                }
+                cout << node.first.first->get_val();
+                if (NULL != node.first.first->get_right())
+                {
+                    for (int i = 1; i < node.first.second/2; i++)
+                    {
+                        cout << ".";
+                    }
+                }
+                else
+                {
+                    for (int i = 1; i < node.first.second/2; i++)
+                    {
+                        cout << " ";
+                    }
+                }
+                for (int i = 0; i < node.first.second/2; i++)
+                {
+                    cout << " ";
+                }
+            }
+            else
+            {
+                for (int i = 0; i < node.first.second/2; i++)
+                {
+                    cout << " ";
+                }
+                for (int i = 0; i < node.first.second; i++)
+                {
+                    cout << " ";
+                }
+            }
+            if (node.second)
+            {
+                cout << endl;
+            }
+            if (NULL != node.first.first)
+            {
+                q.push_back(make_pair(make_pair(node.first.first->get_left(), (node.first.second)/2), false));
+                q.push_back(make_pair(make_pair(node.first.first->get_right(), (node.first.second)/2), node.second));
+            }
+            else if (node.first.second > 1)
+            {
+                q.push_back(make_pair(make_pair(node.first.first, (node.first.second)/2), false));
+                q.push_back(make_pair(make_pair(node.first.first, (node.first.second)/2), node.second));
+            }
+        }
+    }
 public:
     btree() : root(NULL), number_of_nodes(0) {}
-    void insert(T const& val)
+    virtual ~btree() {}
+    virtual Node* const insert(T const& val)
     {
         Node* node = new Node(val);
         if (NULL == root)
@@ -69,6 +146,7 @@ public:
             }
         }
         number_of_nodes++;
+        return node;
     }
     Node* const top(void)
     {
@@ -91,7 +169,7 @@ public:
         }
         return node;
     }
-    void erase(Node* const node)
+    virtual void erase(Node* const node)
     {
         Node* parent = node->get_parent();
         Node* right = node->get_right();
@@ -144,92 +222,20 @@ public:
         }
         delete node;
     }
-    void erase(T const& val)
+    size_t erase(T const& val)
     {
         Node* node;
+        size_t number_of_erased_nodes = 0;
         while (NULL != (node = find(val)))
         {
             erase(node);
+            ++number_of_erased_nodes;
         }
-    }
-    void print(Node* const subtree_root)
-    {
-        list<pair< pair<Node* const, int>, bool> > q;
-        q.push_back(make_pair(make_pair(subtree_root, 64), true));
-        while (!q.empty())
-        {
-            auto node = q.front();
-            q.pop_front();
-            for (int i = 0; i < node.first.second/2; i++)
-            {
-                cout << " ";
-            }
-            if (NULL != node.first.first)
-            {
-                if (NULL != node.first.first->get_left())
-                {
-                    for (int i = 0; i < node.first.second/2; i++)
-                    {
-                        cout << ".";
-                    }
-                }
-                else
-                {
-                    for (int i = 0; i < node.first.second/2; i++)
-                    {
-                        cout << " ";
-                    }
-                }
-                cout << node.first.first->get_val();
-                if (NULL != node.first.first->get_right())
-                {
-                    for (int i = 1; i < node.first.second/2; i++)
-                    {
-                        cout << ".";
-                    }
-                }
-                else
-                {
-                    for (int i = 1; i < node.first.second/2; i++)
-                    {
-                        cout << " ";
-                    }
-                }
-                for (int i = 0; i < node.first.second/2; i++)
-                {
-                    cout << " ";
-                }
-            }
-            else
-            {
-                for (int i = 0; i < node.first.second/2; i++)
-                {
-                    cout << " ";
-                }
-                for (int i = 0; i < node.first.second; i++)
-                {
-                    cout << " ";
-                }
-            }
-            if (node.second)
-            {
-                cout << endl;
-            }
-            if (NULL != node.first.first)
-            {
-                q.push_back(make_pair(make_pair(node.first.first->get_left(), (node.first.second)/2), false));
-                q.push_back(make_pair(make_pair(node.first.first->get_right(), (node.first.second)/2), node.second));
-            }
-            else if (node.first.second > 1)
-            {
-                q.push_back(make_pair(make_pair(node.first.first, (node.first.second)/2), false));
-                q.push_back(make_pair(make_pair(node.first.first, (node.first.second)/2), node.second));
-            }
-        }
+        return number_of_erased_nodes;
     }
     void print(void)
     {
-        print(root);
+        subtree_print(root);
     }
 };
 
