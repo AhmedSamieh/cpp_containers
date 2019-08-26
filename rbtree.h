@@ -18,120 +18,98 @@ template <class T, class Node = rbnode<T> >
 class rbtree : public btree<T, Node>
 {
     using parent_class = btree<T, Node>;
+protected:
     bool balance(Node* node)
     {
-        // facts:
-        // - node is red
-        // - mum is red, not the root, we have a grandma
-        // - sister is black
-        // - grandma is black, it may be the root
-        Node* mum = node->get_parent();
-        Node* grandma = mum->get_parent();
-        Node* grand_grandma = grandma->get_parent();
-        Node* aunt;
-        bool mum_direction;
-        bool node_direction;
+        while (true)
+        {
+            // facts:
+            // - node is red
+            // - mum is red, not the root, we have a grandma
+            // - sister is black
+            // - grandma is black, it may be the root
+            Node* mum = node->get_parent();
+            Node* grandma = mum->get_parent();
+            Node* grand_grandma = grandma->get_parent();
+            bool  mum_direction = (grandma->get_right() == mum);
+            bool  node_direction = (mum->get_right() == node);
+            Node* aunt = mum_direction ? grandma->get_left() : grandma->get_right();
 
-        // get directions
-        if (grandma->get_right() == mum)
-        {
-            mum_direction = true;
-            aunt = grandma->get_left();
-        }
-        else
-        {
-            mum_direction = false;
-            aunt = grandma->get_right();
-        }
-        node_direction = (mum->get_right() == node);
-        if (NULL == aunt || !aunt->is_red()) // aunt is black : rotate A->B->C
-        {
-            if (mum_direction ^ node_direction)
+            if (NULL == aunt || !aunt->is_red()) // aunt is black : rotate A->B->C
             {
-                if (NULL == grand_grandma)
+                Node* new_parent;
+                if (mum_direction != node_direction)
                 {
-                    parent_class::root = node;
-                }
-                else
-                {
-                    if (grand_grandma->get_left() == grandma)
+                    new_parent = node;
+                    mum->set_parent(node);
+                    if (mum_direction) // && !node_direction
                     {
-                        grand_grandma->set_left(node);
+                        // A<-C->B
+                        node->set_left(grandma);
+                        node->set_right(mum);
+                        grandma->set_right(NULL);
+                        mum->set_left(NULL);
+                    }
+                    else //if (!mum_direction && node_direction)
+                    {
+                        // B<-C->A
+                        node->set_right(grandma);
+                        node->set_left(mum);
+                        grandma->set_left(NULL);
+                        mum->set_right(NULL);
+                    }
+                }
+                else // if (mum_direction == node_direction)
+                {
+                    new_parent = mum;
+                    if (mum_direction)
+                    {
+                        // A<-B->C
+                        grandma->set_right(mum->get_left()); // sister is black
+                        mum->set_left(grandma); // same
                     }
                     else
                     {
-                        grand_grandma->set_right(node);
+                        // C<-B->A
+                        grandma->set_left(mum->get_right()); // sister is black
+                        mum->set_right(grandma); // same
                     }
                 }
-                node->set_parent(grand_grandma);
-                node->set_red(false);
-                mum->set_parent(node);
-                grandma->set_parent(node);
+                if (NULL == grand_grandma)
+                {
+                    parent_class::root = new_parent;
+                }
+                else
+                {
+                    if (grand_grandma->get_right() == grandma)
+                    {
+                        grand_grandma->set_right(new_parent);
+                    }
+                    else // if (grand_grandma->get_left() == grandma)
+                    {
+                        grand_grandma->set_left(new_parent);
+                    }
+                }
+                new_parent->set_parent(grand_grandma);
+                new_parent->set_red(false);
+                grandma->set_parent(new_parent);
                 grandma->set_red(true); // it's ok, parent, right and left are black
-                if (mum_direction) // && !node_direction
-                {
-                    // A<-C->B
-                    node->set_left(grandma);
-                    node->set_right(mum);
-                    grandma->set_right(NULL);
-                    mum->set_left(NULL);
-                }
-                else //if (!mum_direction && node_direction)
-                {
-                    // B<-C->A
-                    node->set_right(grandma);
-                    node->set_left(mum);
-                    grandma->set_left(NULL);
-                    mum->set_right(NULL);
-                }
             }
-            else
+            else // if (NULL != aunt && aunt->is_red()) // aunt is red : color flip
             {
-                if (NULL == grand_grandma)
-                {
-                    parent_class::root = mum;
-                }
-                else
-                {
-                    if (grand_grandma->get_left() == grandma)
-                    {
-                        grand_grandma->set_left(mum);
-                    }
-                    else
-                    {
-                        grand_grandma->set_right(mum);
-                    }
-                }
-                mum->set_parent(grand_grandma);
+                aunt->set_red(false);
                 mum->set_red(false);
-                grandma->set_parent(mum);
-                grandma->set_red(true); // it's ok, parent, right and left are black
-                if (mum_direction) // if (mum_direction && node_direction)
+                if (NULL != grand_grandma)
                 {
-                    // A<-B->C
-                    grandma->set_right(mum->get_left()); // sister is black
-                    mum->set_left(grandma);
-                }
-                else // if (!mum_direction && !node_direction)
-                {
-                    // C<-B->A
-                    grandma->set_left(mum->get_right()); // sister is black
-                    mum->set_right(grandma);
+                    grandma->set_red(true);
+                    if (grand_grandma->is_red())
+                    {
+                        node = grandma;
+                        continue;
+                    }
                 }
             }
-        }
-        else // if (NULL != aunt && aunt->is_red()) // aunt is red : color flip
-        {
-            aunt->set_red(false);
-            mum->set_red(false);
-            if (NULL != grand_grandma)
-            {
-                grandma->set_red(true);
-                if (grand_grandma->is_red())
-                {
-                    balance(grandma);
-                }
-            }
+            break;
         }
     }
     virtual void subtree_print(Node* const subtree_root)
