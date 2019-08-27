@@ -45,18 +45,34 @@ protected:
                     if (mum_direction) // && !node_direction
                     {
                         // A<-C->B
+                        grandma->set_right(node->get_left());
+                        if (NULL != node->get_left())
+                        {
+                            node->get_left()->set_parent(grandma);
+                        }
                         node->set_left(grandma);
+                        mum->set_left(node->get_right());
+                        if (NULL != node->get_right())
+                        {
+                            node->get_right()->set_parent(mum);
+                        }
                         node->set_right(mum);
-                        grandma->set_right(NULL);
-                        mum->set_left(NULL);
                     }
                     else //if (!mum_direction && node_direction)
                     {
                         // B<-C->A
+                        grandma->set_left(node->get_right());
+                        if (NULL != node->get_right())
+                        {
+                            node->get_right()->set_parent(grandma);
+                        }
                         node->set_right(grandma);
+                        mum->set_right(node->get_left());
+                        if (NULL != node->get_left())
+                        {
+                            node->get_left()->set_parent(mum);
+                        }
                         node->set_left(mum);
-                        grandma->set_left(NULL);
-                        mum->set_right(NULL);
                     }
                 }
                 else // if (mum_direction == node_direction)
@@ -66,12 +82,20 @@ protected:
                     {
                         // A<-B->C
                         grandma->set_right(mum->get_left()); // sister is black
+                        if (NULL != mum->get_left())
+                        {
+                            mum->get_left()->set_parent(grandma);
+                        }
                         mum->set_left(grandma); // same
                     }
                     else
                     {
                         // C<-B->A
                         grandma->set_left(mum->get_right()); // sister is black
+                        if (NULL != mum->get_right())
+                        {
+                            mum->get_right()->set_parent(grandma);
+                        }
                         mum->set_right(grandma); // same
                     }
                 }
@@ -211,6 +235,10 @@ public:
     {
         parent_class::erase(node);
         // Todo ...
+    }
+    size_t const erase(T const& val)
+    {
+        parent_class::erase(val);
     }
 };
 #endif // _RBTREE_H_

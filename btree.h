@@ -32,6 +32,65 @@ protected:
         }
         return node;
     }
+    void extract(Node* const node)
+    {
+        Node* newChild;
+        if (NULL != node->get_left())
+        {
+            newChild = subtree_top(node->get_left());
+            if (newChild != node->get_left())
+            {
+                newChild->get_parent()->set_right(newChild->get_left());
+                if (NULL != newChild->get_left())
+                {
+                    newChild->get_left()->set_parent(newChild->get_parent());
+                }
+                newChild->set_left(node->get_left());
+                node->get_left()->set_parent(newChild);
+            }
+            newChild->set_right(node->get_right());
+            if (NULL != node->get_right())
+            {
+                node->get_right()->set_parent(newChild);
+            }
+            newChild->set_parent(node->get_parent());
+        }
+        else if (NULL != node->get_right())
+        {
+            newChild = subtree_bottom(node->get_right());
+            if (newChild != node->get_right())
+            {
+                newChild->get_parent()->set_left(newChild->get_right());
+                if (NULL != newChild->get_right())
+                {
+                    newChild->get_right()->set_parent(newChild->get_parent());
+                }
+                newChild->set_right(node->get_right());
+                node->get_right()->set_parent(newChild);
+            }
+            newChild->set_left(NULL);
+            newChild->set_parent(node->get_parent());
+        }
+        else
+        {
+            newChild = NULL;
+        }
+        if (NULL == node->get_parent())
+        {
+            root = newChild;
+        }
+        else
+        {
+            if (node == node->get_parent()->get_right())
+            {
+                node->get_parent()->set_right(newChild);
+            }
+            else
+            {
+                node->get_parent()->set_left(newChild);
+            }
+        }
+    }
     virtual void subtree_print(Node* const subtree_root)
     {
         list<pair< pair<Node* const, int>, bool> > q;
@@ -171,62 +230,7 @@ public:
     }
     virtual void erase(Node* const node)
     {
-        Node* newChild;
-        if (NULL != node->get_left())
-        {
-            newChild = subtree_top(node->get_left());
-            if (newChild != node->get_left())
-            {
-                newChild->get_parent()->set_right(newChild->get_left());
-                if (NULL != newChild->get_left())
-                {
-                    newChild->get_left()->set_parent(newChild->get_parent());
-                }
-                newChild->set_left(node->get_left());
-                node->get_left()->set_parent(newChild);
-            }
-            newChild->set_right(node->get_right());
-            if (NULL != node->get_right())
-            {
-                node->get_right()->set_parent(newChild);
-            }
-            newChild->set_parent(node->get_parent());
-        }
-        else if (NULL != node->get_right())
-        {
-            newChild = subtree_bottom(node->get_right());
-            if (newChild != node->get_right())
-            {
-                newChild->get_parent()->set_left(newChild->get_right());
-                if (NULL != newChild->get_right())
-                {
-                    newChild->get_right()->set_parent(newChild->get_parent());
-                }
-                newChild->set_right(node->get_right());
-                node->get_right()->set_parent(newChild);
-            }
-            newChild->set_left(NULL);
-            newChild->set_parent(node->get_parent());
-        }
-        else
-        {
-            newChild = NULL;
-        }
-        if (NULL == node->get_parent())
-        {
-            root = newChild;
-        }
-        else
-        {
-            if (node == node->get_parent()->get_right())
-            {
-                node->get_parent()->set_right(newChild);
-            }
-            else
-            {
-                node->get_parent()->set_left(newChild);
-            }
-        }
+        extract(node);
         delete node;
         --number_of_nodes;
     }
