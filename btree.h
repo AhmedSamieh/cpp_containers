@@ -35,40 +35,35 @@ protected:
     void extract(Node* const node)
     {
         Node* newChild;
-        if (NULL != node->get_left())
+        if (NULL != node->get_left() || NULL != node->get_right())
         {
-            newChild = subtree_top(node->get_left());
-            if (newChild != node->get_left())
+            if (NULL != node->get_left())
             {
-                newChild->get_parent()->set_right(newChild->get_left());
-                if (NULL != newChild->get_left())
+                if (NULL != node->get_right())
                 {
-                    newChild->get_left()->set_parent(newChild->get_parent());
+                    newChild = subtree_top(node->get_left());
+                    if (newChild != node->get_left())
+                    {
+                        newChild->get_parent()->set_right(newChild->get_left());
+                        if (NULL != newChild->get_left())
+                        {
+                            newChild->get_left()->set_parent(newChild->get_parent());
+                        }
+                        newChild->set_left(node->get_left());
+                        node->get_left()->set_parent(newChild);
+                    }
+                    newChild->set_right(node->get_right());
+                    node->get_right()->set_parent(newChild);
                 }
-                newChild->set_left(node->get_left());
-                node->get_left()->set_parent(newChild);
-            }
-            newChild->set_right(node->get_right());
-            if (NULL != node->get_right())
-            {
-                node->get_right()->set_parent(newChild);
-            }
-            newChild->set_parent(node->get_parent());
-        }
-        else if (NULL != node->get_right())
-        {
-            newChild = subtree_bottom(node->get_right());
-            if (newChild != node->get_right())
-            {
-                newChild->get_parent()->set_left(newChild->get_right());
-                if (NULL != newChild->get_right())
+                else
                 {
-                    newChild->get_right()->set_parent(newChild->get_parent());
+                    newChild = node->get_left();
                 }
-                newChild->set_right(node->get_right());
-                node->get_right()->set_parent(newChild);
             }
-            newChild->set_left(NULL);
+            else
+            {
+                newChild = node->get_right();
+            }
             newChild->set_parent(node->get_parent());
         }
         else

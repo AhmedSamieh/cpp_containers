@@ -61,18 +61,18 @@ protected:
                     else //if (!mum_direction && node_direction)
                     {
                         // B<-C->A
-                        grandma->set_left(node->get_right());
-                        if (NULL != node->get_right())
-                        {
-                            node->get_right()->set_parent(grandma);
-                        }
-                        node->set_right(grandma);
                         mum->set_right(node->get_left());
                         if (NULL != node->get_left())
                         {
                             node->get_left()->set_parent(mum);
                         }
                         node->set_left(mum);
+                        grandma->set_left(node->get_right());
+                        if (NULL != node->get_right())
+                        {
+                            node->get_right()->set_parent(grandma);
+                        }
+                        node->set_right(grandma);
                     }
                 }
                 else // if (mum_direction == node_direction)
@@ -233,6 +233,17 @@ public:
     }
     virtual void erase(Node* const node)
     {
+        if (!node->is_red())
+        {
+            if (NULL != node->get_right() && node->get_right()->is_red())
+            {
+                node->get_right()->set_red(false);
+            }
+            if (NULL != node->get_left() && node->get_left()->is_red())
+            {
+                node->get_left()->set_red(false);
+            }
+        }
         parent_class::erase(node);
         // Todo ...
     }

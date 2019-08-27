@@ -12,9 +12,7 @@ int main(int argc, char **argv)
     rbtree<int> tree;
     for (auto i : data)
     {
-        cout << "insert " << i << endl;
         tree.insert(i);
-        tree.print();
     }
     tree.print();
     cout << "tree size : " << tree.size() << endl;
