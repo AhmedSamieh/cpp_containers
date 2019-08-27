@@ -19,7 +19,7 @@ class rbtree : public btree<T, Node>
 {
     using parent_class = btree<T, Node>;
 protected:
-    bool balance(Node* node)
+    void balance(Node* node)
     {
         while (true)
         {

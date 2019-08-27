@@ -145,7 +145,7 @@ public:
                 }
             }
         }
-        number_of_nodes++;
+        ++number_of_nodes;
         return node;
     }
     Node* const top(void)
@@ -165,64 +165,72 @@ public:
             {
                 break;
             }
-            node = val > node->get_val() ? node->get_right() : node->get_left();
+            node = (val > node->get_val()) ? node->get_right() : node->get_left();
         }
         return node;
     }
     virtual void erase(Node* const node)
     {
-        Node* parent = node->get_parent();
-        Node* right = node->get_right();
-        Node* left = node->get_left();
-        if (NULL == parent)
+        Node* newChild;
+        if (NULL != node->get_left())
         {
-            root = (NULL == left) ? right : left;
+            newChild = subtree_top(node->get_left());
+            if (newChild != node->get_left())
+            {
+                newChild->get_parent()->set_right(newChild->get_left());
+                if (NULL != newChild->get_left())
+                {
+                    newChild->get_left()->set_parent(newChild->get_parent());
+                }
+                newChild->set_left(node->get_left());
+                node->get_left()->set_parent(newChild);
+            }
+            newChild->set_right(node->get_right());
+            if (NULL != node->get_right())
+            {
+                node->get_right()->set_parent(newChild);
+            }
+            newChild->set_parent(node->get_parent());
+        }
+        else if (NULL != node->get_right())
+        {
+            newChild = subtree_bottom(node->get_right());
+            if (newChild != node->get_right())
+            {
+                newChild->get_parent()->set_left(newChild->get_right());
+                if (NULL != newChild->get_right())
+                {
+                    newChild->get_right()->set_parent(newChild->get_parent());
+                }
+                newChild->set_right(node->get_right());
+                node->get_right()->set_parent(newChild);
+            }
+            newChild->set_left(NULL);
+            newChild->set_parent(node->get_parent());
         }
         else
         {
-            if (NULL == left)
+            newChild = NULL;
+        }
+        if (NULL == node->get_parent())
+        {
+            root = newChild;
+        }
+        else
+        {
+            if (node == node->get_parent()->get_right())
             {
-                if (node == parent->get_right())
-                {
-                    parent->set_right(right);
-                }
-                else
-                {
-                    parent->set_left(right);
-                }
+                node->get_parent()->set_right(newChild);
             }
             else
             {
-                if (node == parent->get_right())
-                {
-                    parent->set_right(left);
-                }
-                else
-                {
-                    parent->set_left(left);
-                }
-            }
-        }
-        if (NULL == left)
-        {
-            if (NULL != right)
-            {
-                right->set_parent(parent);
-            }
-        }
-        else
-        {
-            Node* left_top = subtree_top(left);
-            left->set_parent(parent);
-            left_top->set_right(right);
-            if (NULL != right)
-            {
-                right->set_parent(left_top);
+                node->get_parent()->set_left(newChild);
             }
         }
         delete node;
+        --number_of_nodes;
     }
-    size_t erase(T const& val)
+    size_t const erase(T const& val)
     {
         Node* node;
         size_t number_of_erased_nodes = 0;
@@ -232,6 +240,10 @@ public:
             ++number_of_erased_nodes;
         }
         return number_of_erased_nodes;
+    }
+    size_t const size() const
+    {
+        return number_of_nodes;
     }
     void print(void)
     {
