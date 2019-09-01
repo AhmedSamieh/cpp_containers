@@ -9,7 +9,7 @@ class bnode : public bnode_base<T, bnode<T> >
     using parent_class = bnode_base<T, bnode<T> >;
 public:
     bnode() : parent_class() {}
-    bnode(T const& ival) : parent_class(ival) {}
+    bnode(T const &ival) : parent_class(ival) {}
     virtual ~bnode() {}
 };
 #endif // _BNODE_H_

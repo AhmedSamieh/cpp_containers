@@ -12,7 +12,7 @@ class rbnode : public bnode_base<T, rbnode<T> >
 
 public:
     rbnode() : parent_class(), red(true) {}
-    rbnode(T const& ival) : parent_class(ival), red(true){}
+    rbnode(T const &ival) : parent_class(ival), red(true) {}
     virtual ~rbnode() {}
     void set_red(bool const is_red)
     {
