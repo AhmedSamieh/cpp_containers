@@ -1,6 +1,6 @@
 #include <iostream>
 #include <vector>
-#include <set>
+#include "rbtree.h"
 
 using namespace std;
 
@@ -17,40 +17,40 @@ template <class Type>
 class priority_queue
 {
 private:
-    multiset<Type, custom_compare<Type> > ms;
+    rbtree<Type, custom_compare<Type> > rbt;
 public:
     priority_queue()
     {
     }
     ~priority_queue()
     {
-        ms.clear();
+        rbt.clear();
     }
     bool empty()
     {
-        return ms.empty();
+        return rbt.empty();
     }
     size_t size()
     {
-        return ms.size();
+        return rbt.size();
     }
     const Type &top()
     {
-        auto citer = ms.cbegin();
-        if (citer != ms.cend())
+        auto ptr = rbt.top();
+        if (NULL != ptr)
         {
-            return *citer;
+            return ptr->get_val();
         }
     }
     void push(const Type &val)
     {
-        ms.insert(val);
+        rbt.insert(val);
     }
     void pop()
     {
-        if (ms.begin() != ms.end())
+        if (!rbt.empty())
         {
-            ms.erase(ms.begin());
+            rbt.erase(rbt.top());
         }
     }
 };

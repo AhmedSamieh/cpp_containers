@@ -4,9 +4,10 @@
 
 #include <iostream>
 #include <list>
+#include <functional>
 using namespace std;
 
-template <class T, class Node = bnode<T> >
+template <class T, class Compare = std::greater<T>, class Node = bnode<T> >
 
 class btree
 {
@@ -83,7 +84,7 @@ protected:
             root = replacement;
         }
     }
-    virtual void subtree_print(Node *const subtree_root)
+    /*virtual void subtree_print(Node *const subtree_root)
     {
         list<pair< pair<Node *const, int>, bool> > q;
         q.push_back(make_pair(make_pair(subtree_root, 64), true));
@@ -158,7 +159,7 @@ protected:
                 q.push_back(make_pair(make_pair(node.first.first, (node.first.second) / 2), node.second));
             }
         }
-    }
+    }*/
     void set_root(Node *const node)
     {
         root = node;
@@ -182,7 +183,8 @@ public:
             Node *p = root;
             while (true)
             {
-                if (val > p->get_val())
+                Compare compare = Compare();
+                if (compare(val, p->get_val()))
                 {
                     if (NULL == p->get_right())
                     {
@@ -218,13 +220,14 @@ public:
     Node *const find(T const &val)
     {
         Node *node = root;
+        Compare compare = Compare();
         while (NULL != node)
         {
             if (val == node->get_val())
             {
                 break;
             }
-            node = (val > node->get_val()) ? node->get_right() : node->get_left();
+            node = compare(val, node->get_val()) ? node->get_right() : node->get_left();
         }
         return node;
     }
@@ -245,14 +248,25 @@ public:
         }
         return number_of_erased_nodes;
     }
+    void clear(void)
+    {
+        while (!empty())
+        {
+            erase(top());
+        }
+    }
+    bool empty(void)
+    {
+        return number_of_nodes == 0;
+    }
     size_t const size() const
     {
         return number_of_nodes;
     }
-    void print(void)
+    /*void print(void)
     {
         this->subtree_print(root);
-    }
+    }*/
 };
 
 #endif // _BTREE_H_

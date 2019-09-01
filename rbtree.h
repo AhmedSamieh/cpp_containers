@@ -4,6 +4,8 @@
 #include "btree.h"
 
 #include <iostream>
+#include <list>
+#include <functional>
 
 using namespace std;
 /*
@@ -17,10 +19,10 @@ using namespace std;
  - Black aunt rotate, after rotation we got black parent and red children
  - Red aunt color flip, after flip we got red grand-parent and black parent/aunt
  */
-template <class T, class Node = rbnode<T> >
-class rbtree : public btree<T, Node>
+template <class T, class Compare = std::greater<T>, class Node = rbnode<T> >
+class rbtree : public btree<T, Compare, Node>
 {
-    using parent_class = btree<T, Node>;
+    using parent_class = btree<T, Compare, Node>;
 protected:
     void rotate_right(Node *const head)
     {
@@ -414,7 +416,7 @@ protected:
             break;
         }
     }
-    virtual void subtree_print(Node *const subtree_root)
+    /*virtual void subtree_print(Node *const subtree_root)
     {
         list<pair< pair<Node *const, int>, bool> > q;
         q.push_back(make_pair(make_pair(subtree_root, 64), true));
@@ -489,7 +491,7 @@ protected:
                 q.push_back(make_pair(make_pair(node.first.first, (node.first.second) / 2), node.second));
             }
         }
-    }
+    }*/
 public:
     rbtree() : parent_class() {}
     virtual ~rbtree() {}

@@ -69,12 +69,12 @@ int main(int argc, char **argv)
     priority_queue2<int, int> pq;
 
     int input[] = {3, 1, 2, 4, 5, 1, 3, 2, 3, 4, 1, 2, 5, 1, 3, 2, 1, 1};
-    for (int i = 0; i < sizeof(input)/sizeof(int); i++)
+    for (int i = 0; i < sizeof(input) / sizeof(int); i++)
     {
         cout << "push: " << input[i] << ", " << i + 1 << endl;
         pq.push(input[i], i + 1);
     }
-    for (int i = 0; i < sizeof(input)/sizeof(int); i++)
+    for (int i = 0; i < sizeof(input) / sizeof(int); i++)
     {
         cout << "top : " << pq.top() << endl;
         pq.pop();

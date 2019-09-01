@@ -97,8 +97,8 @@ public:
                         new_node->set_parent(parent);
                         //cout << "Parent(" << parent->get_key() << ", " << parent->get_val() << ")" << endl;
                         if (NULL == parent->get_right() &&
-                            NULL != (grand_parent = parent->get_parent()) &&
-                            NULL == grand_parent->get_right())
+                                NULL != (grand_parent = parent->get_parent()) &&
+                                NULL == grand_parent->get_right())
                         {
                             //cout << "fix (" << new_node->get_val() << ", " << parent->get_val() << ", " << grand_parent->get_val() << ")" << endl;
                             parent->set_right(grand_parent);
@@ -174,7 +174,7 @@ public:
         {
             pair< pair< KeyValBSTNode<KeyType, ValType> *, int>, bool> node = q.top();
             q.pop();
-            for (int i = 0; i < node.first.second/2; i++)
+            for (int i = 0; i < node.first.second / 2; i++)
             {
                 cout << " ";
             }
@@ -182,14 +182,14 @@ public:
             {
                 if (NULL != node.first.first->get_left())
                 {
-                    for (int i = 0; i < node.first.second/2; i++)
+                    for (int i = 0; i < node.first.second / 2; i++)
                     {
                         cout << ".";
                     }
                 }
                 else
                 {
-                    for (int i = 0; i < node.first.second/2; i++)
+                    for (int i = 0; i < node.first.second / 2; i++)
                     {
                         cout << " ";
                     }
@@ -197,26 +197,26 @@ public:
                 cout << node.first.first->get_val();
                 if (NULL != node.first.first->get_right())
                 {
-                    for (int i = 1; i < node.first.second/2; i++)
+                    for (int i = 1; i < node.first.second / 2; i++)
                     {
                         cout << ".";
                     }
                 }
                 else
                 {
-                    for (int i = 1; i < node.first.second/2; i++)
+                    for (int i = 1; i < node.first.second / 2; i++)
                     {
                         cout << " ";
                     }
                 }
-                for (int i = 0; i < node.first.second/2; i++)
+                for (int i = 0; i < node.first.second / 2; i++)
                 {
                     cout << " ";
                 }
             }
             else
             {
-                for (int i = 0; i < node.first.second/2; i++)
+                for (int i = 0; i < node.first.second / 2; i++)
                 {
                     cout << " ";
                 }
@@ -231,13 +231,13 @@ public:
             }
             if (NULL != node.first.first)
             {
-                q.push(1, make_pair(make_pair(node.first.first->get_left(), (node.first.second)/2), false));
-                q.push(1, make_pair(make_pair(node.first.first->get_right(), (node.first.second)/2), node.second));
+                q.push(1, make_pair(make_pair(node.first.first->get_left(), (node.first.second) / 2), false));
+                q.push(1, make_pair(make_pair(node.first.first->get_right(), (node.first.second) / 2), node.second));
             }
             else if (node.first.second > 1)
             {
-                q.push(1, make_pair(make_pair(node.first.first, (node.first.second)/2), false));
-                q.push(1, make_pair(make_pair(node.first.first, (node.first.second)/2), node.second));
+                q.push(1, make_pair(make_pair(node.first.first, (node.first.second) / 2), false));
+                q.push(1, make_pair(make_pair(node.first.first, (node.first.second) / 2), node.second));
             }
         }
     }
@@ -248,13 +248,13 @@ int main(int argc, char **argv)
     priority_queue<int, int> pq;
 
     int input[] = {3, 1, 2, 4, 5, 1, 3, 2, 3, 4, 1, 2, 5, 1, 3, 2, 1, 1};
-    for (int i = 0; i < sizeof(input)/sizeof(int); i++)
+    for (int i = 0; i < sizeof(input) / sizeof(int); i++)
     {
         cout << "push: " << input[i] << ", " << i + 1 << endl;
         pq.push(input[i], i + 1);
     }
     pq.print();
-    for (int i = 0; i < sizeof(input)/sizeof(int); i++)
+    for (int i = 0; i < sizeof(input) / sizeof(int); i++)
     {
         cout << "top : " << pq.top() << endl;
         pq.pop();
